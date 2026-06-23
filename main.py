@@ -15,7 +15,7 @@ llm = ChatGroq(model="llama-3.1-8b-instant", api_key=os.getenv("GROQ_API_KEY"))
 
 embeddings=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = Chroma(persist_directory="chroma_db", embedding_function=embeddings)
-print("Vector database created successfully")
+print("Vector database accessed complete")
 
 retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
