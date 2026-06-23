@@ -12,16 +12,9 @@ load_dotenv()
 
 llm = ChatGroq(model="llama-3.1-8b-instant", api_key=os.getenv("GROQ_API_KEY"))
 
-loader = PyPDFLoader("docs/Hammad_Arif_Resume_latest.pdf")
-docs = loader.load()
-print(f"Loaded {len(docs)} pages")
 
-splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-chunks = splitter.split_documents(docs)
-print(f"Split into {len(chunks)} chunks")
-
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-vectorstore = Chroma.from_documents(chunks, embeddings, persist_directory="chroma_db")
+embeddings=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+vectorstore = Chroma(persist_directory="chroma_db", embedding_function=embeddings)
 print("Vector database created successfully")
 
 retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
