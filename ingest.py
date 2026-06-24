@@ -8,10 +8,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_experimental.text_splitter import SemanticChunker
-
 load_dotenv()
 
-file_name="Hammad_Arif_Resume_latest"
+file_name="research_paper"
 loader = PyPDFLoader(f"docs/{file_name}.pdf")
 docs = loader.load()
 raw_text = "\n".join([d.page_content for d in docs])
