@@ -55,7 +55,7 @@ splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
 chunks = splitter.split_text(md_text)
 print(f"Split into {len(chunks)} chunks")
 for i, chunk in enumerate(chunks):
-    print(f"\nChunk {i+1}:", chunk.metadata)
+    print(f"\nChunk {i+1}:", chunk.metadata) 
     
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = Chroma.from_documents(chunks, embeddings, persist_directory="chroma_db")
