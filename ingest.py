@@ -10,8 +10,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 load_dotenv()
 
-
-loader = PyPDFLoader("docs/Hammad_Arif_Resume_latest.pdf")
+file_name="Hammad_Arif_Resume_latest"
+loader = PyPDFLoader(f"docs/{file_name}.pdf")
 docs = loader.load()
 raw_text = "\n".join([d.page_content for d in docs])
 print("PDF loaded")
@@ -38,9 +38,9 @@ if (through_md):
     md = md.strip()
 
     os.makedirs("data", exist_ok=True)
-    with open("data/resume.md", "w", encoding="utf-8") as f:
+    with open(f"data/{file_name}.md", "w", encoding="utf-8") as f:
         f.write(md)
-    print("Saved to data/resume.md")
+    print("Saved to data/{file_name}}.md")
 
     headers_to_split_on = [
         ("#", "Header1"),
@@ -49,7 +49,7 @@ if (through_md):
     ]
 
 
-    with open("data/resume.md", "r", encoding="utf-8") as f:
+    with open("data/{file_name}.md", "r", encoding="utf-8") as f:
         md_text = f.read()
 
     splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
