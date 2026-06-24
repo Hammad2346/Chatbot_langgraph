@@ -7,6 +7,7 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
 
 load_dotenv()
 
@@ -16,6 +17,8 @@ docs = loader.load()
 raw_text = "\n".join([d.page_content for d in docs])
 print("PDF loaded")
 through_md=os.getenv("through_md", "false").lower() == "true"
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
 if (through_md):
     llm = ChatGroq(model="llama-3.1-8b-instant", api_key=os.getenv("GROQ_API_KEY"))
     prompt = f"""Convert this resume text into clean markdown format.
@@ -40,7 +43,7 @@ if (through_md):
     os.makedirs("data", exist_ok=True)
     with open(f"data/{file_name}.md", "w", encoding="utf-8") as f:
         f.write(md)
-    print("Saved to data/{file_name}}.md")
+    print(f"Saved to data/{file_name}.md")
 
     headers_to_split_on = [
         ("#", "Header1"),
@@ -49,7 +52,7 @@ if (through_md):
     ]
 
 
-    with open("data/{file_name}.md", "r", encoding="utf-8") as f:
+    with open(f"data/{file_name}.md", "r", encoding="utf-8") as f:
         md_text = f.read()
 
     splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
@@ -58,10 +61,9 @@ if (through_md):
     for i, chunk in enumerate(chunks):
         print(f"\nChunk {i+1}:", chunk.metadata) 
 else:
-    splitter=RecursiveCharacterTextSplitter(chunk_size=500,chunk_overlap=100)
+    splitter=SemanticChunker(embeddings=embeddings)
     chunks=splitter.split_documents(docs)
     print("chunks created.")
     
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = Chroma.from_documents(chunks, embeddings, persist_directory="chroma_db")
 print("Vectorstore created successfully")
